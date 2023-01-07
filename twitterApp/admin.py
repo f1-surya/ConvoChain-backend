@@ -10,7 +10,7 @@ class UserProfileInline(admin.StackedInline):
 
 class UserAdmin(admin.ModelAdmin):
     model = User
-    fields = ["username"]
+    fields = ['username']
     inlines = [UserProfileInline]
 
 

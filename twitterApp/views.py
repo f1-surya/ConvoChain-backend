@@ -1,15 +1,11 @@
 from itertools import chain
 from operator import attrgetter
 
-from django.contrib import messages
-from django.contrib.auth import login, authenticate, logout
-from django.contrib.auth.forms import AuthenticationForm
 from django.db.models import F
 from django.http import JsonResponse, HttpResponseRedirect
-from django.shortcuts import render
 from rest_framework import viewsets
 
-from .forms import NewUserForm, NewTweetForm, NewCommentForm
+from .forms import NewTweetForm, NewCommentForm
 from .models import Tweet, UserProfile, Comment
 from .serializers import TweetSerializer, ProfileSerializer, CommentSerializer
 
@@ -45,46 +41,6 @@ def get_tweets(request):
 
         serializer = TweetSerializer(tweets, many=True, context={'user': request.user})
         return JsonResponse(serializer.data, safe=False)
-
-
-def register(request):
-    if request.method == 'POST':
-        form = NewUserForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            messages.success(request, 'Account registered')
-    else:
-        form = NewUserForm()
-        context = {'form': form}
-        return render(request, 'twitterApp/register.html', context)
-
-    return JsonResponse(data={'status': 'success'})
-
-
-def user_login(request):
-    if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            user = authenticate(username=username, password=password)
-            if user is not None:
-                login(request, user)
-                messages.info(request, f'You are now logged in as {username},')
-                return JsonResponse(data={'status': 'success'})
-            else:
-                messages.error(request, 'Invalid username or password.')
-        else:
-            messages.error(request, 'Invalid username or password.')
-
-    return JsonResponse(data={})
-
-
-def user_logout(request):
-    logout(request)
-    messages.info(request, "You have successfully logged out")
-    return JsonResponse(data={})
 
 
 def tweet(request):

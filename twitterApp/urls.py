@@ -3,9 +3,6 @@ from .views import *
 
 urlpatterns = [
     path('', get_tweets, name='get_tweets'),
-    path('register', register, name='register'),
-    path('login', user_login, name='login'),
-    path('logout', user_logout, name='logout'),
     path('profile_list', ProfilesViewsSet.as_view, name='profile_list'),
     path('profile/<int:pk>', ProfileViewSet.as_view, name='profile'),
     path('tweet', tweet, name='tweet'),

@@ -1,13 +1,7 @@
-from django.contrib.auth.models import User
 from rest_framework import serializers
 
+from userManagement.serializers import ProfileSerializer
 from .models import Tweet, Comment
-
-
-class ProfileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('username', )
 
 
 class TweetSerializer(serializers.ModelSerializer):
