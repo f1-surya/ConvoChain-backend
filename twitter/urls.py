@@ -3,6 +3,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('twitterApp.urls')),
-    path('', include('userManagement.urls'))
+    path('', include('tweets.urls')),
+    path('', include('users.urls')),
+    path('', include('comments.urls'))
 ]

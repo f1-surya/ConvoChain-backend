@@ -36,12 +36,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'twitterApp.apps.TwitterappConfig',
+    'tweets.apps.TwitterappConfig',
+    'comments.apps.CommentsConfig',
     'crispy_forms',
     'rest_framework',
-    'userManagement.apps.UserManagementConfig',
+    'users.apps.UserManagementConfig',
     'knox',
-    # 'knox.models.AuthToken'
 ]
 
 MIDDLEWARE = [
@@ -134,10 +134,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
-CORS_EXPOSE_HEADERS = ["set-cookie"]
 CORS_ALLOW_CREDENTIALS = True
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SAMESITE = 'None'
-SESSION_COOKIE_SAMESITE = 'None'
-CORS_ALLOW_METHODS = ["GET", "POST"]
+CORS_ALLOW_METHODS = ["GET", "POST", "PUT"]
