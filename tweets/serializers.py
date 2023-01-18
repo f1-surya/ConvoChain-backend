@@ -1,11 +1,12 @@
 from rest_framework.fields import SerializerMethodField
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, CharField
 
 from .models import Tweet
 
 
 class TweetSerializer(ModelSerializer):
     liked_by_user = SerializerMethodField('get_liked_by_user')
+    author = CharField(source='author.username', read_only=True)
 
     class Meta:
         model = Tweet
