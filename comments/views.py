@@ -17,7 +17,7 @@ class CommentView(APIView):
     def post(self, request, pk):
         tweet = Tweet.objects.get(pk=pk)
         comment = Comment()
-        comment.comment = request.data['comment']
+        comment.body = request.data['body']
         comment.author = request.user
         comment.tweet = tweet
         comment.save()

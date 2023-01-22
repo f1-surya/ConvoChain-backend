@@ -10,7 +10,7 @@ class CommentSerializer(ModelSerializer):
     class Meta:
         model = Comment
         fields = '__all__'
-        read_only_fields = ('comment', 'author', 'posted_date', 'liked_by_user', 'tweet')
+        read_only_fields = ('body', 'author', 'posted_date', 'liked_by_user', 'tweet')
 
     def get_liked_by_user(self, comment):
         user = self.context['user']
