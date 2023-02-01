@@ -1,4 +1,4 @@
-from rest_framework.fields import SerializerMethodField
+from rest_framework.fields import SerializerMethodField, CharField
 from rest_framework.serializers import ModelSerializer
 
 from .models import Comment
@@ -6,6 +6,8 @@ from .models import Comment
 
 class CommentSerializer(ModelSerializer):
     liked_by_user = SerializerMethodField('get_liked_by_user')
+    author = CharField(source='author.username', read_only=True)
+    author_name = SerializerMethodField('get_author_name')
 
     class Meta:
         model = Comment
@@ -23,5 +25,9 @@ class CommentSerializer(ModelSerializer):
 
     def get_tweet(self, comment):
         tweet = self.context['tweet']
-        print(tweet)
         return tweet
+
+    def get_author_name(self, comment):
+        user = comment.author
+        return user.first_name + ' ' + user.last_name
+
