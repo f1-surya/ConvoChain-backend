@@ -16,7 +16,7 @@ class Tweets(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request, format=None):
+    def post(self, request):
         serializer = TweetSerializer(data=request.data, context={'user': request.user})
 
         if serializer.is_valid():
@@ -27,21 +27,21 @@ class Tweets(APIView):
 
         return Response(status=HTTP_500_INTERNAL_SERVER_ERROR)
 
-    def get(self, request, format=None):
+    def get(self, request):
         follows = request.user.userprofile.follows.all()
         tweets = None
         for followed in follows:
             if tweets is None:
                 tweets = Tweet.objects.filter(author=followed.user)
             else:
-                followed_tweets = Tweet.objects.filter(posted_by=followed.user)
-                tweets = sorted(chain(tweets[-1], followed_tweets), key=attrgetter('posted_date'))
+                followed_tweets = Tweet.objects.filter(author=followed.user)
+                tweets = sorted(chain(tweets, followed_tweets), key=attrgetter('posted_date'), reverse=True)
 
         serializer = TweetSerializer(data=tweets, many=True, context={'user': request.user})
         serializer.is_valid()
         return Response(serializer.data, HTTP_200_OK)
 
-    def put(self, request, format=None):
+    def put(self, request):
         tweet_instance = Tweet.objects.get(pk=request.data['pk'])
         if tweet_instance.likes.filter(id=request.user.id).exists():
             tweet_instance.likes.remove(request.user)
