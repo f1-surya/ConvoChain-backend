@@ -37,25 +37,25 @@ class ProfileView(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
-    def get(self, request):
-        user = User.objects.get(username=request.data['username'])
+    def get(self, request, username, query):
+        user = User.objects.get(username=username)
         user_profile = UserProfile.objects.get(user=user)
-        profile_serializer = ProfileSerializer(data=user_profile)
+        profile_serializer = ProfileSerializer(instance=user_profile)
 
-        if request.data['query'] == 'likes':
+        if query == 'likes':
             likes = Tweet.objects.filter(likes=user.id)
             tweets_serializer = TweetSerializer(data=likes, many=True, context={'user': user})
             tweets_serializer.is_valid()
             return Response({'profile': profile_serializer.data,
                              'likes': tweets_serializer.data}, HTTP_200_OK)
 
-        if request.data['query'] == 'followers':
+        if query == 'followers':
             followers = UserProfile.objects.filter(follows=user_profile)
             followers_serializer = ProfileSerializer(data=followers, many=True)
             followers_serializer.is_valid()
             return Response(followers_serializer.data)
 
-        if request.data['query'] == 'following':
+        if query == 'following':
             following = user_profile.follows
             follows_serializer = ProfileSerializer(data=following, many=True)
             follows_serializer.is_valid()
@@ -69,6 +69,7 @@ class ProfileView(APIView):
 
     def put(self, request, pk=None):
         user_profile = UserProfile.objects.get(user=request.user)
+        print(request.data['query'])
 
         if request.data['query'] == 'follow':
             user_to_follow = User.objects.get(username=request.data['username'])
@@ -85,8 +86,9 @@ class ProfileView(APIView):
 
             user_profile.save()
             profile_to_follow.save()
+            return Response(data={'message': 'Profile updated'}, status=HTTP_200_OK)
 
         user_profile.about = request.data['about']
         user_profile.save()
 
-        return Response()
+        return Response(data={'message': 'Updated about'})

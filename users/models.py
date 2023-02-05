@@ -10,7 +10,7 @@ class UserProfile(Model):
     )
     following_count = IntegerField(default=0)
     followers_count = IntegerField(default=0)
-    about = CharField(max_length=50, blank=True)
+    about = CharField(max_length=50, blank=True, default='')
 
     def __str__(self):
         return self.user.username

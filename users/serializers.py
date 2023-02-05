@@ -42,7 +42,7 @@ class ProfileSerializer(ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = '__all__'
+        exclude = ('follows',)
 
     def get_full_name(self, profile):
         return profile.user.first_name + ' ' + profile.user.last_name
