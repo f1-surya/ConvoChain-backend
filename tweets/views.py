@@ -1,5 +1,4 @@
 from itertools import chain
-from operator import attrgetter
 
 from django.db.models import F
 from knox.auth import TokenAuthentication
@@ -35,8 +34,9 @@ class Tweets(APIView):
                 tweets = Tweet.objects.filter(author=followed.user)
             else:
                 followed_tweets = Tweet.objects.filter(author=followed.user)
-                tweets = sorted(chain(tweets, followed_tweets), key=attrgetter('posted_date'), reverse=True)
+                tweets = chain(tweets, followed_tweets)
 
+        tweets = sorted(tweets, key=lambda tweet: tweet.posted_date, reverse=True)
         serializer = TweetSerializer(data=tweets, many=True, context={'user': request.user})
         serializer.is_valid()
         return Response(serializer.data, HTTP_200_OK)
