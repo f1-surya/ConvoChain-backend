@@ -62,7 +62,7 @@ class ProfileView(APIView):
             return Response(follows_serializer.data)
 
         tweets = Tweet.objects.filter(author=user)
-        tweets_serializer = TweetSerializer(data=tweets, many=True, context={'user': user})
+        tweets_serializer = TweetSerializer(data=tweets, many=True, context={'user': request.user})
         tweets_serializer.is_valid()
         return Response({'profile': profile_serializer.data,
                          'tweets': tweets_serializer.data})
