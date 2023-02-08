@@ -16,13 +16,10 @@ class CommentSerializer(ModelSerializer):
 
     def get_liked_by_user(self, comment):
         user = self.context['user']
-        likes = comment.likes.all()
-        for like in likes:
-            if like == user:
-                return True
+        if comment.likes.filter(id=user.id).exists():
+            return True
 
         return False
-
     def get_tweet(self, comment):
         tweet = self.context['tweet']
         return tweet

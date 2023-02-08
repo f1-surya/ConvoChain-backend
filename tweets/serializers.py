@@ -17,10 +17,8 @@ class TweetSerializer(ModelSerializer):
 
     def get_liked_by_user(self, tweet):
         user = self.context['user']
-        likes = tweet.likes.all()
-        for like in likes:
-            if like == user:
-                return True
+        if tweet.likes.filter(id=user.id).exists():
+            return True
 
         return False
 

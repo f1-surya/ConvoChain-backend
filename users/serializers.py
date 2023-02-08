@@ -39,6 +39,7 @@ class RegisterSerializer(ModelSerializer):
 class ProfileSerializer(ModelSerializer):
     user = CharField(source='user.username', read_only=True)
     full_name = SerializerMethodField('get_full_name')
+    followed_by_user = SerializerMethodField('get_followed_by_user')
 
     class Meta:
         model = UserProfile
@@ -46,3 +47,10 @@ class ProfileSerializer(ModelSerializer):
 
     def get_full_name(self, profile):
         return profile.user.first_name + ' ' + profile.user.last_name
+
+    def get_followed_by_user(self, profile):
+        requester_profile = UserProfile.objects.get(user=self.context['user'])
+        if requester_profile.follows.filter(follows=profile).exists():
+            return True
+
+        return False

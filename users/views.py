@@ -40,7 +40,7 @@ class ProfileView(APIView):
     def get(self, request, username, query):
         user = User.objects.get(username=username)
         user_profile = UserProfile.objects.get(user=user)
-        profile_serializer = ProfileSerializer(instance=user_profile)
+        profile_serializer = ProfileSerializer(instance=user_profile, context={'user': request.user})
 
         if query == 'likes':
             likes = Tweet.objects.filter(likes=user.id)
