@@ -1,3 +1,5 @@
+from itertools import chain
+
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.db.models import F
@@ -37,7 +39,31 @@ class ProfileView(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
-    def get(self, request, username, query):
+    def get(self, request, query, username):
+        if query == 'search':
+            users = User.objects.filter(first_name__istartswith=username)
+            users_last_name = User.objects.filter(last_name__istartswith=username)
+
+            users = list(users) + list(set(users_last_name) - set(users))
+            if len(users) == 0:
+                return Response('Cannot find user')
+            profiles = None
+
+            for user in users:
+                if profiles is None:
+                    profiles = UserProfile.objects.filter(user=user)
+                else:
+                    profiles = chain(profiles, UserProfile.objects.filter(user=user))
+
+            usernames = []
+            for profile in profiles:
+                usernames.append({
+                    'fullName': profile.user.first_name + ' ' + profile.user.last_name,
+                    'username': profile.user.username
+                })
+
+            return Response(data=usernames)
+
         user = User.objects.get(username=username)
         user_profile = UserProfile.objects.get(user=user)
         profile_serializer = ProfileSerializer(instance=user_profile, context={'user': request.user})
@@ -69,7 +95,6 @@ class ProfileView(APIView):
 
     def put(self, request, pk=None):
         user_profile = UserProfile.objects.get(user=request.user)
-        print(request.data['query'])
 
         if request.data['query'] == 'follow':
             user_to_follow = User.objects.get(username=request.data['username'])
