@@ -50,7 +50,4 @@ class ProfileSerializer(ModelSerializer):
 
     def get_followed_by_user(self, profile):
         requester_profile = UserProfile.objects.get(user=self.context['user'])
-        if requester_profile.follows.filter(follows=profile).exists():
-            return True
-
-        return False
+        return requester_profile.follows.filter(follows=profile).exists()

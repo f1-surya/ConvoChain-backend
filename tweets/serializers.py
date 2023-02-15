@@ -17,10 +17,7 @@ class TweetSerializer(ModelSerializer):
 
     def get_liked_by_user(self, tweet):
         user = self.context['user']
-        if tweet.likes.filter(id=user.id).exists():
-            return True
-
-        return False
+        return tweet.likes.filter(id=user.id).exists()
 
     def get_comment_count(self, tweet):
         comments = Comment.objects.filter(tweet=tweet)
