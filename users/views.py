@@ -46,7 +46,7 @@ class ProfileView(APIView):
 
             users = list(users) + list(set(users_last_name) - set(users))
             if len(users) == 0:
-                return Response('Cannot find user')
+                return Response([])
             profiles = None
 
             for user in users:
@@ -70,6 +70,7 @@ class ProfileView(APIView):
 
         if query == 'likes':
             likes = Tweet.objects.filter(likes=user.id)
+            likes = sorted(likes, key=lambda tweet: tweet.posted_date, reverse=True)
             tweets_serializer = TweetSerializer(data=likes, many=True, context={'user': user})
             tweets_serializer.is_valid()
             return Response({'profile': profile_serializer.data,
@@ -77,17 +78,18 @@ class ProfileView(APIView):
 
         if query == 'followers':
             followers = UserProfile.objects.filter(follows=user_profile)
-            followers_serializer = ProfileSerializer(data=followers, many=True)
+            followers_serializer = ProfileSerializer(data=followers, many=True, context={'user': user})
             followers_serializer.is_valid()
             return Response(followers_serializer.data)
 
         if query == 'following':
             following = user_profile.follows
-            follows_serializer = ProfileSerializer(data=following, many=True)
+            follows_serializer = ProfileSerializer(data=following, many=True, context={'user': user})
             follows_serializer.is_valid()
             return Response(follows_serializer.data)
 
         tweets = Tweet.objects.filter(author=user)
+        tweets = sorted(tweets, key=lambda tweet: tweet.posted_date, reverse=True)
         tweets_serializer = TweetSerializer(data=tweets, many=True, context={'user': request.user})
         tweets_serializer.is_valid()
         return Response({'profile': profile_serializer.data,
@@ -113,7 +115,15 @@ class ProfileView(APIView):
             profile_to_follow.save()
             return Response(data={'message': 'Profile updated'}, status=HTTP_200_OK)
 
-        user_profile.about = request.data['about']
-        user_profile.save()
+        if request.data['query'] == 'edit':
+            if request.data['edit_first_name'] == 'true':
+                request.user.first_name = request.data['first_name']
+            if request.data['edit_about'] == 'true':
+                user_profile.about = request.data['about']
+                user_profile.save()
+            if request.data['edit_last_name'] == 'true':
+                request.user.last_name = request.data['last_name']
+
+            request.user.save()
 
         return Response(data={'message': 'Updated about'})
