@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-kv2plh0_8hsy3f)82$$rm1xh7=3ey-q_%(mfnlxr$v#bjx0w5m
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.mytwitter.com', '127.0.0.1', '0.0.0.0']
+ALLOWED_HOSTS = ['.mytwitter.com', '0.0.0.0']
 
 # Application definition
 
@@ -133,8 +133,8 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
-CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
+CORS_ALLOWED_ORIGINS = ['http://localhost:3000', 'http://127.0.0.1']
 CORS_ALLOW_CREDENTIALS = True
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
-CORS_ALLOW_METHODS = ["GET", "POST", "PUT"]
+CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT']

@@ -25,4 +25,3 @@ class CommentSerializer(ModelSerializer):
     def get_author_name(self, comment):
         user = comment.author
         return user.first_name + ' ' + user.last_name
-

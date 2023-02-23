@@ -1,2 +1,2 @@
 # Twitter-backend
-I tried to build a twitter back-end using Django for learning purposes
+I am trying to build a Twitter like app using Django as back-end for learning purposes

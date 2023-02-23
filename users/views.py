@@ -39,7 +39,16 @@ class ProfileView(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
-    def get(self, request, query, username):
+    def get(self, request):
+        query = request.GET.get('query')
+        username = request.GET.get('username')
+
+        if query == 'profileList':
+            profiles = UserProfile.objects.all()
+            profiles = sorted(profiles, key=lambda profile: profile.followers_count, reverse=True)
+            profile_serializer = ProfileSerializer(data=profiles, context={'user': request.user}, many=True)
+            profile_serializer.is_valid()
+            return Response(profile_serializer.data)
         if query == 'search':
             users = User.objects.filter(first_name__istartswith=username)
             users_last_name = User.objects.filter(last_name__istartswith=username)
