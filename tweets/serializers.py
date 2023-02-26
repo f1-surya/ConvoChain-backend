@@ -1,28 +1,18 @@
 from rest_framework.fields import SerializerMethodField
-from rest_framework.serializers import ModelSerializer, CharField
+from rest_framework.serializers import ModelSerializer
 
-from comments.models import Comment
+from meta.serializers import MetaSerializer
 from .models import Tweet
 
 
 class TweetSerializer(ModelSerializer):
-    author = CharField(source='author.username', read_only=True)
-    author_name = SerializerMethodField('get_author_name')
-    liked_by_user = SerializerMethodField('get_liked_by_user')
-    comment_count = SerializerMethodField('get_comment_count')
+    meta = SerializerMethodField('get_meta')
 
     class Meta:
         model = Tweet
-        exclude = ('likes',)
+        fields = '__all__'
 
-    def get_liked_by_user(self, tweet):
-        user = self.context['user']
-        return tweet.likes.filter(id=user.id).exists()
-
-    def get_comment_count(self, tweet):
-        comments = Comment.objects.filter(tweet=tweet)
-        return len(comments)
-
-    def get_author_name(self, tweet):
-        user = tweet.author
-        return user.first_name + ' ' + user.last_name
+    def get_meta(self, tweet):
+        meta = tweet.meta
+        serializer = MetaSerializer(instance=meta, context=self.context)
+        return serializer.data

@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED, HTTP_200_OK
 from rest_framework.views import APIView
 
-from tweets.models import Tweet
+from meta.models import Meta
 from .models import Comment
 from .serializers import CommentSerializer
 
@@ -15,32 +15,29 @@ class CommentView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request, pk):
-        tweet = Tweet.objects.get(pk=pk)
-        comment = Comment()
-        comment.body = request.data['body']
-        comment.author = request.user
-        comment.tweet = tweet
-        comment.save()
+        parent = Meta.objects.get(pk=pk)
+        meta = Meta.objects.create(author=request.user, content_type='comment')
+        Comment.objects.create(meta=meta, parent=parent, body=request.data['body'])
 
         return Response(HTTP_201_CREATED)
 
     def get(self, request, pk):
-        tweet = Tweet.objects.get(pk=pk)
-        comments = Comment.objects.filter(tweet=tweet)
+        meta = Meta.objects.get(pk=pk)
+        comments = Comment.objects.filter(parent=meta)
         serializer = CommentSerializer(data=comments, many=True, context={'user': request.user})
         serializer.is_valid()
 
         return Response(serializer.data, HTTP_200_OK)
 
     def put(self, request, pk):
-        comment = Comment.objects.get(pk=pk)
-        if comment.likes.filter(id=request.user.id).exists():
-            comment.likes.remove(request.user)
-            comment.likes_count = F('likes_count') - 1
+        meta = Meta.objects.get(pk=pk)
+        if meta.likes.filter(id=request.user.id).exists():
+            meta.likes.remove(request.user)
+            meta.likes_count = F('likes_count') - 1
         else:
-            comment.likes.add(request.user)
-            comment.likes_count = F('likes_count') + 1
+            meta.likes.add(request.user)
+            meta.likes_count = F('likes_count') + 1
 
-        comment.save()
+        meta.save()
 
         return Response(HTTP_200_OK)

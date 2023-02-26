@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-kv2plh0_8hsy3f)82$$rm1xh7=3ey-q_%(mfnlxr$v#bjx0w5m
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.mytwitter.com', '0.0.0.0']
+ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1']
 
 # Application definition
 
@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'tweets.apps.TwitterappConfig',
     'comments.apps.CommentsConfig',
+    'meta.apps.MetaConfig',
+    'retweets.apps.RetweetsConfig',
     'crispy_forms',
     'rest_framework',
     'users.apps.UserManagementConfig',
@@ -92,22 +94,6 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
-
-AUTH_PASSWORD_VALIDATORS = [
-    # {
-    #     'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    # },
-    # {
-    #     'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    # },
-    # {
-    #     'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    # },
-    # {
-    #     'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    # },
-]
-
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': ['knox.auth.TokenAuthentication']
 }
@@ -135,6 +121,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 CORS_ALLOWED_ORIGINS = ['http://localhost:3000', 'http://127.0.0.1']
 CORS_ALLOW_CREDENTIALS = True
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
 CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT']

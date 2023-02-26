@@ -1,23 +1,11 @@
 from django.contrib.auth.models import User
-from django.contrib.auth.password_validation import validate_password
-from django.forms import EmailField
-
 from rest_framework.fields import CharField, SerializerMethodField
 from rest_framework.serializers import ModelSerializer
-from rest_framework.validators import UniqueValidator
 
 from users.models import UserProfile
 
 
 class RegisterSerializer(ModelSerializer):
-    first_name = CharField(required=True)
-    last_name = CharField(required=True)
-    email = EmailField(
-        required=True,
-        validators=[UniqueValidator(queryset=User.objects.all())]
-    )
-    password = CharField(write_only=True, required=True, validators=[validate_password])
-
     class Meta:
         model = User
         fields = ('username', 'first_name', 'last_name', 'email', 'password')

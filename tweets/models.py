@@ -1,17 +1,11 @@
-from django.contrib.auth.models import User
-from django.db import models
-from django.db.models import ForeignKey, CharField, IntegerField, DateTimeField, ManyToManyField, Model
+from django.db.models import CharField, Model, OneToOneField, CASCADE
+
+from meta.models import Meta
 
 
 class Tweet(Model):
-    author = ForeignKey(User, on_delete=models.DO_NOTHING)
+    meta = OneToOneField(Meta, on_delete=CASCADE)
     body = CharField(max_length=255)
-    likes_count = IntegerField(default=0)
-    posted_date = DateTimeField('posted date', auto_now_add=True)
-    likes = ManyToManyField(User, blank=True, related_name='likes')
 
     def __str__(self):
         return self.body
-
-    def get_author(self):
-        return self.author
