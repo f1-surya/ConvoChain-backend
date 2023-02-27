@@ -32,3 +32,8 @@ class ReTweets(APIView):
         meta.save()
 
         return Response(HTTP_200_OK)
+
+    def delete(self, request):
+        content = Meta.objects.get(pk=request.GET.get('pk'))
+        ReTweet.objects.get(content=content).meta.delete()
+        return Response(data={'message': 'Reversed Retweet'})

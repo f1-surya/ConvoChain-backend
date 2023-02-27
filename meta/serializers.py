@@ -12,6 +12,7 @@ class MetaSerializer(ModelSerializer):
     liked_by_user = SerializerMethodField('get_liked_by_user')
     comment_count = SerializerMethodField('get_comment_count')
     retweet_count = SerializerMethodField('get_retweet_count')
+    retweeted_by_user = SerializerMethodField('get_retweeted_by_user')
 
     class Meta:
         model = Meta
@@ -32,3 +33,6 @@ class MetaSerializer(ModelSerializer):
     def get_retweet_count(self, meta):
         retweets = ReTweet.objects.filter(content=meta)
         return len(retweets)
+
+    def get_retweeted_by_user(self, meta):
+        return ReTweet.objects.filter(content=meta).exists()
