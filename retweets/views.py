@@ -7,7 +7,6 @@ from rest_framework.views import APIView
 
 from meta.models import Meta
 from retweets.models import ReTweet
-from tweets.models import Tweet
 
 
 class ReTweets(APIView):
@@ -15,9 +14,12 @@ class ReTweets(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
-        tweet_meta = Tweet.objects.get(pk=request.data['pk']).meta
+        content_meta = Meta.objects.get(pk=request.data['pk'])
+        if content_meta.content_type == 'retweet':
+            return Response(data='You cannot retweet Retweets for now')
+
         meta = Meta.objects.create(author=request.user, content_type='retweet')
-        ReTweet.objects.create(content=tweet_meta, meta=meta)
+        ReTweet.objects.create(content=content_meta, meta=meta)
         return Response(HTTP_201_CREATED)
 
     def put(self, request):
