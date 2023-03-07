@@ -1,8 +1,7 @@
-from django.db.models import F
 from knox.auth import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.status import HTTP_201_CREATED, HTTP_200_OK
+from rest_framework.status import HTTP_201_CREATED
 from rest_framework.views import APIView
 
 from meta.models import Meta
@@ -21,19 +20,6 @@ class ReTweets(APIView):
         meta = Meta.objects.create(author=request.user, content_type='retweet')
         ReTweet.objects.create(content=content_meta, meta=meta)
         return Response(HTTP_201_CREATED)
-
-    def put(self, request):
-        meta = ReTweet.objects.get(pk=request.data['pk']).meta
-        if meta.likes.filter(id=request.user.id).exists():
-            meta.likes.remove(request.user)
-            meta.likes_count = F('likes_count') - 1
-        else:
-            meta.likes.add(request.user)
-            meta.likes_count = F('likes_count') + 1
-
-        meta.save()
-
-        return Response(HTTP_200_OK)
 
     def delete(self, request):
         content = Meta.objects.get(pk=request.GET.get('pk'))

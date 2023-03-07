@@ -8,4 +8,6 @@ class ReTweet(Model):
     content = ForeignKey(Meta, on_delete=CASCADE, related_name='refers')
 
     def __str__(self):
+        if self.content.content_type == 'comment':
+            return self.content.comment.body
         return self.content.tweet.body

@@ -11,4 +11,3 @@ urlpatterns = [
     path('', include('comments.urls')),
     path('', include('retweets.urls'))
 ]
-
