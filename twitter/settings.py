@@ -84,7 +84,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'twitter',
-        'USER': 'postgres',
+        'USER': 'twitter',
         'PASSWORD': 'monaco84',
         'HOST': 'localhost',
         'PORT': '5432'
@@ -119,6 +119,6 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
-CORS_ALLOWED_ORIGINS = ['http://localhost:3000', 'http://127.0.0.1']
+CORS_ALLOWED_ORIGINS = ['http://localhost:3000', 'http://127.0.0.1', 'http://65.1.114.106']
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'DELETE']
