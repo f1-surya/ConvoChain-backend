@@ -5,9 +5,9 @@ from .views import GetData
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', GetData.as_view()),
-    path('', include('tweets.urls')),
-    path('', include('users.urls')),
-    path('', include('comments.urls')),
-    path('', include('retweets.urls'))
+    path('api/', GetData.as_view()),
+    path('api/', include('tweets.urls')),
+    path('api/', include('users.urls')),
+    path('api/', include('comments.urls')),
+    path('api/', include('retweets.urls'))
 ]
