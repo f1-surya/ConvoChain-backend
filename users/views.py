@@ -79,8 +79,8 @@ class ProfileView(APIView):
         profile_serializer = ProfileSerializer(instance=user_profile, context={'user': request.user})
 
         if query == 'likes':
-            likes = Tweet.objects.filter(likes=user.id)
-            likes = sorted(likes, key=lambda tweet: tweet.posted_date, reverse=True)
+            likes = Tweet.objects.filter(meta__likes=user.id)
+            likes = sorted(likes, key=lambda tweet: tweet.meta.posted_date, reverse=True)
             tweets_serializer = TweetSerializer(data=likes, many=True, context={'user': user})
             tweets_serializer.is_valid()
             return Response({'profile': profile_serializer.data,
@@ -98,8 +98,8 @@ class ProfileView(APIView):
             follows_serializer.is_valid()
             return Response(follows_serializer.data)
 
-        tweets = Tweet.objects.filter(author=user)
-        tweets = sorted(tweets, key=lambda tweet: tweet.posted_date, reverse=True)
+        tweets = Tweet.objects.filter(meta__author=user)
+        tweets = sorted(tweets, key=lambda tweet: tweet.meta.posted_date, reverse=True)
         tweets_serializer = TweetSerializer(data=tweets, many=True, context={'user': request.user})
         tweets_serializer.is_valid()
         return Response({'profile': profile_serializer.data,

@@ -30,7 +30,8 @@ class TweetSerializer(ModelSerializer):
             if comments_list is None:
                 comments_list = comments.filter(meta__author=follow.user)
             else:
-                comments_list = chain(comments_list, comments.filter(meta__posted_by=follow.user))
+                comments_list = chain(comments_list, comments.filter(meta__author=follow.user))
 
+        comments_list = sorted(comments_list, key=lambda comment: comment.meta.posted_date, reverse=True)
         serializer = CommentSerializer(instance=comments_list, context=self.context, many=True)
         return serializer.data
