@@ -12,6 +12,8 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK
 from rest_framework.views import APIView
 
+from retweets.models import ReTweet
+from retweets.serializers import ReTweetSerializer
 from tweets.models import Tweet
 from tweets.serializers import TweetSerializer
 from users.models import UserProfile
@@ -97,6 +99,14 @@ class ProfileView(APIView):
             follows_serializer = ProfileSerializer(data=following, many=True, context={'user': user})
             follows_serializer.is_valid()
             return Response(follows_serializer.data)
+
+        if query == 'retweets':
+            retweets = ReTweet.objects.filter(meta__author=user)
+            retweets = sorted(retweets, key=lambda retweet: retweet.meta.posted_date, reverse=True)
+            serializer = ReTweetSerializer(data=retweets, many=True, context={'user': user})
+            serializer.is_valid()
+            return Response({'profile': profile_serializer.data,
+                             'retweets': serializer.data}, HTTP_200_OK)
 
         tweets = Tweet.objects.filter(meta__author=user)
         tweets = sorted(tweets, key=lambda tweet: tweet.meta.posted_date, reverse=True)

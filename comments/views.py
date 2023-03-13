@@ -32,6 +32,7 @@ class CommentView(APIView):
             parent_serializer = ReTweetSerializer(instance=meta.retweet, context={'user': request.user})
 
         comments = Comment.objects.filter(parent=meta)
+        comments = sorted(comments, key=lambda comment: comment.meta.posted_date, reverse=True)
         serializer = CommentSerializer(data=comments, many=True, context={'user': request.user})
         serializer.is_valid()
 
