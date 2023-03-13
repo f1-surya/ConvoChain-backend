@@ -42,7 +42,7 @@ class ReTweetSerializer(ModelSerializer):
             if comments_list is None:
                 comments_list = comments.filter(meta__author=follow.user)
             else:
-                comments_list = chain(comments_list, comments.filter(meta__posted_by=follow.user))
+                comments_list = chain(comments_list, comments.filter(meta__author=follow.user))
 
         serializer = CommentSerializer(instance=comments_list, context=self.context, many=True)
         return serializer.data

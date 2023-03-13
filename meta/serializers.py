@@ -35,4 +35,4 @@ class MetaSerializer(ModelSerializer):
         return len(retweets)
 
     def get_retweeted_by_user(self, meta):
-        return ReTweet.objects.filter(content=meta).exists()
+        return ReTweet.objects.filter(content=meta).filter(meta__author=self.context['user']).exists()
