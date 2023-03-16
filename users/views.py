@@ -9,7 +9,6 @@ from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.status import HTTP_200_OK
 from rest_framework.views import APIView
 
 from retweets.models import ReTweet
@@ -83,10 +82,10 @@ class ProfileView(APIView):
         if query == 'likes':
             likes = Tweet.objects.filter(meta__likes=user.id)
             likes = sorted(likes, key=lambda tweet: tweet.meta.posted_date, reverse=True)
-            tweets_serializer = TweetSerializer(data=likes, many=True, context={'user': user})
+            tweets_serializer = TweetSerializer(data=likes, many=True, context={'user': user, 'comments': False})
             tweets_serializer.is_valid()
             return Response({'profile': profile_serializer.data,
-                             'likes': tweets_serializer.data}, HTTP_200_OK)
+                             'content': tweets_serializer.data})
 
         if query == 'followers':
             followers = UserProfile.objects.filter(follows=user_profile)
@@ -106,14 +105,14 @@ class ProfileView(APIView):
             serializer = ReTweetSerializer(data=retweets, many=True, context={'user': user})
             serializer.is_valid()
             return Response({'profile': profile_serializer.data,
-                             'retweets': serializer.data}, HTTP_200_OK)
+                             'content': serializer.data})
 
         tweets = Tweet.objects.filter(meta__author=user)
         tweets = sorted(tweets, key=lambda tweet: tweet.meta.posted_date, reverse=True)
-        tweets_serializer = TweetSerializer(data=tweets, many=True, context={'user': request.user})
+        tweets_serializer = TweetSerializer(data=tweets, many=True, context={'user': request.user, 'comments': False})
         tweets_serializer.is_valid()
         return Response({'profile': profile_serializer.data,
-                         'tweets': tweets_serializer.data})
+                         'content': tweets_serializer.data})
 
     def put(self, request, pk=None):
         user_profile = UserProfile.objects.get(user=request.user)
@@ -133,7 +132,7 @@ class ProfileView(APIView):
 
             user_profile.save()
             profile_to_follow.save()
-            return Response(data={'message': 'Profile updated'}, status=HTTP_200_OK)
+            return Response(data={'message': 'Profile updated'})
 
         if request.data['query'] == 'edit':
             if request.data['edit_first_name'] == 'true':

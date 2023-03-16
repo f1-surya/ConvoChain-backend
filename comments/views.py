@@ -1,7 +1,7 @@
 from knox.auth import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.status import HTTP_201_CREATED, HTTP_200_OK
+from rest_framework.status import HTTP_201_CREATED
 from rest_framework.views import APIView
 
 from meta.models import Meta
@@ -24,16 +24,27 @@ class CommentView(APIView):
 
     def get(self, request, pk):
         meta = Meta.objects.get(pk=pk)
-        if meta.content_type == 'tweet':
-            parent_serializer = TweetSerializer(instance=meta.tweet, context={'user': request.user})
-        elif meta.content_type == 'comment':
-            parent_serializer = CommentSerializer(instance=meta.comment, context={'user': request.user})
-        else:
-            parent_serializer = ReTweetSerializer(instance=meta.retweet, context={'user': request.user})
-
         comments = Comment.objects.filter(parent=meta)
         comments = sorted(comments, key=lambda comment: comment.meta.posted_date, reverse=True)
         serializer = CommentSerializer(data=comments, many=True, context={'user': request.user})
         serializer.is_valid()
 
-        return Response([parent_serializer.data, serializer.data], HTTP_200_OK)
+        meta = meta.comment.meta
+        thread = []
+        while True:
+            if meta.content_type == 'tweet':
+                tweet_serializer = TweetSerializer(instance=meta.tweet,
+                                                   context={'user': request.user, 'comments': False})
+                thread.append(tweet_serializer.data)
+                break
+            elif meta.content_type == 'retweet':
+                retweet_serializer = ReTweetSerializer(instance=meta.retweet, context={'user': request.user})
+                thread.append(retweet_serializer.data)
+                break
+            comment_serializer = CommentSerializer(instance=meta.comment, context={'user': request.user})
+            thread.append(comment_serializer.data)
+            meta = meta.comment.parent
+
+        thread.sort(key=lambda content: content['meta']['posted_date'])
+
+        return Response([thread, serializer.data])

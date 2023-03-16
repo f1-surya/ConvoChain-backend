@@ -33,7 +33,7 @@ class GetData(APIView):
             elif meta.content_type == 'retweet':
                 retweets.append(meta.retweet)
 
-        tweet_serializer = TweetSerializer(data=tweets, many=True, context={'user': request.user})
+        tweet_serializer = TweetSerializer(data=tweets, many=True, context={'user': request.user, 'comments': True})
         tweet_serializer.is_valid()
 
         retweet_serializer = ReTweetSerializer(data=retweets, many=True, context={'user': request.user})

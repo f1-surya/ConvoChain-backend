@@ -23,6 +23,9 @@ class TweetSerializer(ModelSerializer):
         return serializer.data
 
     def get_comments(self, tweet):
+        if not self.context['comments']:
+            return []
+
         follows = self.context['user'].userprofile.follows.all()
         comments = Comment.objects.filter(parent=tweet.meta)
         comments_list = None
