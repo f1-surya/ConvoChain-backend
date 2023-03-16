@@ -38,7 +38,7 @@ class CommentView(APIView):
                 thread.append(tweet_serializer.data)
                 break
             elif meta.content_type == 'retweet':
-                retweet_serializer = ReTweetSerializer(instance=meta.retweet, context={'user': request.user})
+                retweet_serializer = ReTweetSerializer(instance=meta.retweet, context={'user': request.user, 'comment': False})
                 thread.append(retweet_serializer.data)
                 break
             comment_serializer = CommentSerializer(instance=meta.comment, context={'user': request.user})

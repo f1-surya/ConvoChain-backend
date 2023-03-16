@@ -27,7 +27,7 @@ class ReTweetSerializer(ModelSerializer):
     def get_content(self, retweet):
         content = retweet.content
         if content.content_type == 'tweet':
-            serializer = TweetSerializer(instance=content.tweet, context=self.context)
+            serializer = TweetSerializer(instance=content.tweet, context={'user': self.context['user'], 'comments': False})
             return serializer.data
 
         elif content.content_type == 'comment':
@@ -35,6 +35,8 @@ class ReTweetSerializer(ModelSerializer):
             return serializer.data
 
     def get_comments(self, retweet):
+        if not self.context['comments']:
+            return []
         follows = self.context['user'].userprofile.follows.all()
         comments = Comment.objects.filter(parent=retweet.meta)
         comments_list = None
