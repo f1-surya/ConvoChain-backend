@@ -29,7 +29,6 @@ class CommentView(APIView):
         serializer = CommentSerializer(data=comments, many=True, context={'user': request.user})
         serializer.is_valid()
 
-        meta = meta.comment.meta
         thread = []
         while True:
             if meta.content_type == 'tweet':
