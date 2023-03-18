@@ -36,7 +36,8 @@ class GetData(APIView):
         tweet_serializer = TweetSerializer(data=tweets, many=True, context={'user': request.user, 'comments': True})
         tweet_serializer.is_valid()
 
-        retweet_serializer = ReTweetSerializer(data=retweets, many=True, context={'user': request.user, 'comments': True})
+        retweet_serializer = ReTweetSerializer(data=retweets, many=True,
+                                               context={'user': request.user, 'comments': True})
         retweet_serializer.is_valid()
 
         data = chain(tweet_serializer.data, retweet_serializer.data)

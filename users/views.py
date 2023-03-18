@@ -102,7 +102,7 @@ class ProfileView(APIView):
         if query == 'retweets':
             retweets = ReTweet.objects.filter(meta__author=user)
             retweets = sorted(retweets, key=lambda retweet: retweet.meta.posted_date, reverse=True)
-            serializer = ReTweetSerializer(data=retweets, many=True, context={'user': user})
+            serializer = ReTweetSerializer(data=retweets, many=True, context={'user': user, 'comments': False})
             serializer.is_valid()
             return Response({'profile': profile_serializer.data,
                              'content': serializer.data})
